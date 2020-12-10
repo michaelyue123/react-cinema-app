@@ -11,7 +11,7 @@ jobs:
           name: Show current branch
           command: echo ${CURRENT_BRANCH}
       - restore-cache: 
-          key:
+          keys:
             - app-{{ checksum "package.json" }}
             - app-
       - run:
@@ -20,7 +20,7 @@ jobs:
       - save_cache:
           paths:
             - node_modules
-          key: app-{{ checksum "package.json" }}
+          keys: app-{{ checksum "package.json" }}
 
 deploy-to-aws-s3:
   docker: 
