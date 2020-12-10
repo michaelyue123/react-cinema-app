@@ -12,6 +12,7 @@ aliases:
       name: Show current branch
       command: echo ${CIRCLE_BRANCH} 
   - &restore_cache
+    restore_cache:
       keys:
         - app-{{ checksum "package.json" }}
         - app-
@@ -20,9 +21,10 @@ aliases:
       name: Install dependencies
       command: npm install
   - &save_cache
-    paths:
-      - node_modules
-    key: app-{{ checksum "package.json" }}
+    save_cache:
+      paths:
+        - node_modules
+      key: app-{{ checksum "package.json" }}
   - &install-aws-cli 
     run:
       name: Install AWS CLI
