@@ -38,12 +38,12 @@ jobs:
             sudo apt-get install -y python-pip python-dev build-essential
       - run:
           name: Build Project
-          command: 
+          command: |
             npm install
             npm run build
             cd build
             zip ../build.zip -r * .[^.]*
-            echo "Build Successful"
+            echo "Build successful"
       - run:
           name: Deploy to AWS S3
           command: | 
@@ -74,12 +74,12 @@ jobs:
             sudo apt-get install -y python-pip python-dev build-essential
       - run:
           name: Build Project
-          command: 
+          command: |
             npm install
             npm run build
             cd build
             zip ../build.zip -r * .[^.]*
-            echo "Build Successful"
+            echo "Build successful"
       - run:
           name: Deploy to AWS Cloudfront
           command: | 
