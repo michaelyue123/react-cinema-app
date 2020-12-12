@@ -9,10 +9,6 @@ const initialState = {};
 const loggerMiddleware = createLogger();
 const middleware = [thunkMiddleware, loggerMiddleware];
 
-const store = createStore(
-    rootReducers,
-    initialState,
-    composeWithDevTools(applyMiddleware(...middleware))
-);
+const store = createStore(rootReducers, initialState, composeWithDevTools(applyMiddleware(...middleware)));
 
 export default store;
