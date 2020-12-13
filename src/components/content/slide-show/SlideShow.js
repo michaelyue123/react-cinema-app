@@ -77,7 +77,7 @@ const SlideShow = (props) => {
 
   const Indicators = (props) => {
     const { currentSlide } = props;
-    const listIndicators = images.map((slide, index) => {
+    const listIndicators = images.map((index) => {
       const buttonClasses = index === currentSlide ? 'slider-navButton slider-navButton--active' : 'slider-navButton';
       return <button className={buttonClasses} key={index} />;
     });
