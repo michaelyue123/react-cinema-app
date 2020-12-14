@@ -12,13 +12,7 @@ const Main = () => {
     }, 3000);
   }, []);
 
-  return (
-    <div className="main">
-      {
-        loading ? <Spinner /> : <MainContent />
-      }
-    </div>
-  );
+  return <div className="main">{loading ? <Spinner /> : <MainContent />}</div>;
 };
 
 export default Main;

@@ -6,29 +6,29 @@ import { IMAGE_URL } from '../../../services/movies.service';
 import './Grid.scss';
 
 const Grid = () => {
-  const list = useSelector(state => state.movies.list);
-
+  const list = useSelector((state) => state.movies.list);
 
   return (
     <>
       <div className="grid">
-        {list && list.map((image) => (
-          <div key={uuidv4()}>
-            <div className="grid-cell" style={{ backgroundImage: `url(${IMAGE_URL}${image.poster_path})` }}>
-              <div className="grid-read-more">
-                <button className="grid-cell-button">Read More</button>
-              </div>
-              <div className="grid-detail">
-                <span className="grid-detail-title">{image.title}</span>
-                <div className="grid-detail-rating">
-                  <Rating rating={image.vote_average} totalStars={10} />
-                  &nbsp;&nbsp;
-                  <div className="grid-vote-average">{image.vote_average}</div>
+        {list &&
+          list.map((image) => (
+            <div key={uuidv4()}>
+              <div className="grid-cell" style={{ backgroundImage: `url(${IMAGE_URL}${image.poster_path})` }}>
+                <div className="grid-read-more">
+                  <button className="grid-cell-button">Read More</button>
+                </div>
+                <div className="grid-detail">
+                  <span className="grid-detail-title">{image.title}</span>
+                  <div className="grid-detail-rating">
+                    <Rating rating={image.vote_average} totalStars={10} />
+                    &nbsp;&nbsp;
+                    <div className="grid-vote-average">{image.vote_average}</div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
       </div>
     </>
   );

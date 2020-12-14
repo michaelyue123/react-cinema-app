@@ -1,6 +1,5 @@
 import { MOVIE_LIST, RESPONSE_PAGE } from '../types';
 
-
 const initialState = {
   list: [],
   page: 1,

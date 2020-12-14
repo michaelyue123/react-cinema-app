@@ -85,7 +85,7 @@ const SlideShow = ({ images, isHover }) => {
       return <button className={buttonClasses} key={image.id} />;
     });
 
-    return <div className="slider-nav" >{listIndicators}</div>;
+    return <div className="slider-nav">{listIndicators}</div>;
   };
 
   return (

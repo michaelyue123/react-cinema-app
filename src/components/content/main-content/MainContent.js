@@ -10,16 +10,16 @@ import './MainContent.scss';
 const MainContent = () => {
   const [isHover, setIsHover] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const list = useSelector(state => state.movies.list);
-  const [ images, setImages ] = useState([]);
+  const list = useSelector((state) => state.movies.list);
+  const [images, setImages] = useState([]);
   let randomMovies;
 
-  if(list) {
-    randomMovies = list.sort(() => Math.random() - Math.random()).slice(0,4);
+  if (list) {
+    randomMovies = list.sort(() => Math.random() - Math.random()).slice(0, 4);
   }
 
   useEffect(() => {
-    if(randomMovies.length) {
+    if (randomMovies.length) {
       const IMAGES = [
         {
           id: list[0].id,
@@ -50,8 +50,7 @@ const MainContent = () => {
     }
 
     // eslint-disable-next-line
-  }, [])
-
+  }, []);
 
   const paginate = (type) => {
     if (type === 'prev' && currentPage > 1) {
@@ -79,6 +78,6 @@ const MainContent = () => {
 
 MainContent.propTypes = {
   list: PropTypes.array
-}
+};
 
 export default MainContent;

@@ -33,11 +33,11 @@ const HEADER_LIST = [
   }
 ];
 
-// dispatch movie action 
+// dispatch movie action
 function dispatchMovieAction(type, payload) {
   switch (type) {
     case MOVIE_LIST:
-      return { type: MOVIE_LIST, payload};
+      return { type: MOVIE_LIST, payload };
     case RESPONSE_PAGE:
       return {
         type: RESPONSE_PAGE,
@@ -49,17 +49,14 @@ function dispatchMovieAction(type, payload) {
         payload
       };
     default:
-      return "";
+      return '';
   }
-
 }
-
 
 const Header = () => {
   const [navClass, setNavClass] = useState(false);
   const [menuClass, setMenuClass] = useState(false);
   const dispatch = useDispatch();
-
 
   useEffect(() => {
     async function fetchData() {
@@ -69,20 +66,17 @@ const Header = () => {
         const payload = {
           page,
           totalPages: total_pages
-        }
+        };
         dispatch(dispatchMovieAction(MOVIE_LIST, results));
-        dispatch(dispatchMovieAction(RESPONSE_PAGE, payload))
-      }
-      catch(error) {
-        if(error.response) {
+        dispatch(dispatchMovieAction(RESPONSE_PAGE, payload));
+      } catch (error) {
+        if (error.response) {
           dispatch(dispatchMovieAction(SET_ERROR, error.response.data.message));
         }
-      }  
+      }
     }
     fetchData();
-
-  }, [dispatch])
-
+  }, [dispatch]);
 
   const toggleMenu = () => {
     setNavClass(!navClass);
@@ -108,15 +102,16 @@ const Header = () => {
             <span className="bar"></span>
           </div>
           <ul className={`${navClass ? 'header-nav header-mobile-nav' : 'header-nav'}`}>
-            {HEADER_LIST && HEADER_LIST.map((data) => (
-              <li className="header-nav-item" key={data.id}>
-                <span className="header-list-name">
-                  <i className={data.iconClass}></i>
-                </span>
-                &nbsp;
-                <span className="header-list-name">{data.name}</span>
-              </li>
-            ))}
+            {HEADER_LIST &&
+              HEADER_LIST.map((data) => (
+                <li className="header-nav-item" key={data.id}>
+                  <span className="header-list-name">
+                    <i className={data.iconClass}></i>
+                  </span>
+                  &nbsp;
+                  <span className="header-list-name">{data.name}</span>
+                </li>
+              ))}
             <li className="header-nav-item">Now Playing</li>
             <li className="header-nav-item">New Movies</li>
             <input className="search-input" type="text" placeholder="Search for a movie" />
@@ -126,6 +121,5 @@ const Header = () => {
     </>
   );
 };
-
 
 export default Header;
