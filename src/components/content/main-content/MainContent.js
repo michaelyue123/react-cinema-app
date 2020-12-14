@@ -1,12 +1,57 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Grid from '../grid/Grid';
 import Paginate from '../paginate/Paginate';
 import SlideShow from '../slide-show/SlideShow';
+import { useSelector } from 'react-redux';
+import PropTypes from 'prop-types';
+import { IMAGE_URL } from '../../../services/movies.service';
 import './MainContent.scss';
 
 const MainContent = () => {
   const [isHover, setIsHover] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const list = useSelector(state => state.movies.list);
+  const [ images, setImages ] = useState([]);
+  let randomMovies;
+
+  if(list) {
+    randomMovies = list.sort(() => Math.random() - Math.random()).slice(0,4);
+  }
+
+  useEffect(() => {
+    if(randomMovies.length) {
+      const IMAGES = [
+        {
+          id: list[0].id,
+          url: `${IMAGE_URL}/${randomMovies[0].backdrop_path}`,
+          rating: list[0].vote_average,
+          title: list[0].title
+        },
+        {
+          id: list[1].id,
+          url: `${IMAGE_URL}/${randomMovies[1].backdrop_path}`,
+          rating: list[1].vote_average,
+          title: list[1].title
+        },
+        {
+          id: list[2].id,
+          url: `${IMAGE_URL}/${randomMovies[2].backdrop_path}`,
+          rating: list[2].vote_average,
+          title: list[2].title
+        },
+        {
+          id: list[3].id,
+          url: `${IMAGE_URL}/${randomMovies[3].backdrop_path}`,
+          rating: list[3].vote_average,
+          title: list[3].title
+        }
+      ];
+      setImages(IMAGES);
+    }
+
+    // eslint-disable-next-line
+  }, [])
+
 
   const paginate = (type) => {
     if (type === 'prev' && currentPage > 1) {
@@ -15,25 +60,6 @@ const MainContent = () => {
       setCurrentPage((prev) => prev + 1);
     }
   };
-
-  const images = [
-    {
-      url: 'https://i.pinimg.com/originals/af/8d/63/af8d63a477078732b79ff9d9fc60873f.jpg',
-      rating: 7.5
-    },
-    {
-      url: 'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__340.jpg',
-      rating: 9.5
-    },
-    {
-      url: 'https://lumiere-a.akamaihd.net/v1/images/sa_pixar_virtualbg_coco_16x9_9ccd7110.jpeg?region=0,0,1920,1080',
-      rating: 8.0
-    },
-    {
-      url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRcBFvwWwx5kb2YQ3-hgYq_LuBMzL_mcm6Ww&usqp=CAU',
-      rating: 6.5
-    }
-  ];
 
   return (
     <div className="main-content">
@@ -46,9 +72,13 @@ const MainContent = () => {
           <Paginate currentPage={currentPage} totalPages={10} paginate={paginate} />
         </div>
       </div>
-      <Grid images={images} />
+      <Grid />
     </div>
   );
 };
+
+MainContent.propTypes = {
+  list: PropTypes.array
+}
 
 export default MainContent;

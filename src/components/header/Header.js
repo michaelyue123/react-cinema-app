@@ -1,6 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import cinemaLogo from '../../assets/cinema-logo.svg';
+// import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import './Header.scss';
+import { MOVIE_LIST, RESPONSE_PAGE, SET_ERROR } from '../../redux/types';
+import { MOVIE_API_URL } from '../../services/movies.service';
 
 const HEADER_LIST = [
   {
@@ -29,9 +33,56 @@ const HEADER_LIST = [
   }
 ];
 
+// dispatch movie action 
+function dispatchMovieAction(type, payload) {
+  switch (type) {
+    case MOVIE_LIST:
+      return { type: MOVIE_LIST, payload};
+    case RESPONSE_PAGE:
+      return {
+        type: RESPONSE_PAGE,
+        payload
+      };
+    case SET_ERROR:
+      return {
+        type: SET_ERROR,
+        payload
+      };
+    default:
+      return "";
+  }
+
+}
+
+
 const Header = () => {
   const [navClass, setNavClass] = useState(false);
   const [menuClass, setMenuClass] = useState(false);
+  const dispatch = useDispatch();
+
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await MOVIE_API_URL('now_playing', 1);
+        const { results, page, total_pages } = response.data;
+        const payload = {
+          page,
+          totalPages: total_pages
+        }
+        dispatch(dispatchMovieAction(MOVIE_LIST, results));
+        dispatch(dispatchMovieAction(RESPONSE_PAGE, payload))
+      }
+      catch(error) {
+        if(error.response) {
+          dispatch(dispatchMovieAction(SET_ERROR, error.response.data.message));
+        }
+      }  
+    }
+    fetchData();
+
+  }, [dispatch])
+
 
   const toggleMenu = () => {
     setNavClass(!navClass);
@@ -57,7 +108,7 @@ const Header = () => {
             <span className="bar"></span>
           </div>
           <ul className={`${navClass ? 'header-nav header-mobile-nav' : 'header-nav'}`}>
-            {HEADER_LIST.map((data) => (
+            {HEADER_LIST && HEADER_LIST.map((data) => (
               <li className="header-nav-item" key={data.id}>
                 <span className="header-list-name">
                   <i className={data.iconClass}></i>
@@ -75,5 +126,6 @@ const Header = () => {
     </>
   );
 };
+
 
 export default Header;

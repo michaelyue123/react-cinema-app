@@ -1,29 +1,25 @@
+import { MOVIE_LIST, RESPONSE_PAGE } from '../types';
+
+
 const initialState = {
-  list: []
+  list: [],
+  page: 1,
+  totalPages: 0
 };
 
 export const movieReducer = (state = initialState, action) => {
   switch (action.type) {
-    // case authConstants.REGISTER_SUCCESS:
-    //     return {
-    //         user: action.user
-    //     };
-    // case authConstants.LOGIN_SUCCESS:
-    //     return {
-    //         user: action.user
-    //     };
-    // case authConstants.LOGOUT:
-    //     return {};
-    // case alertConstants.IS_CONFIRMED:
-    //     return {
-    //         user: state.user,
-    //         isConfirmed: action.status
-    //     }
-    // case authConstants.UPDATE_SUCCESS:
-    //     return {
-    //         user: action.user,
-    //         isConfirmed: action.user.status
-    //     }
+    case MOVIE_LIST:
+      return {
+        ...state,
+        list: action.payload
+      };
+    case RESPONSE_PAGE:
+      return {
+        ...state,
+        page: action.payload.page,
+        totalPages: action.payload.totalPages
+      };
     default:
       return state;
   }
