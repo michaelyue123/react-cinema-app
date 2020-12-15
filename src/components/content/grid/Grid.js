@@ -10,27 +10,34 @@ const Grid = ({  }) => {
   useEffect(() => {
     setMovieData(list);
   }, [])
+import { v4 as uuidv4 } from 'uuid';
+import { IMAGE_URL } from '../../../services/movies.service';
+import './Grid.scss';
+
+const Grid = () => {
+  const list = useSelector((state) => state.movies.list);
 
   return (
     <>
       <div className="grid">
-        {images.map((image, index) => (
-          <div key={index}>
-            <div className="grid-cell" style={{ backgroundImage: `url(${image.url})` }}>
-              <div className="grid-read-more">
-                <button className="grid-cell-button">Read More</button>
-              </div>
-              <div className="grid-detail">
-                <span className="grid-detail-title">Mission Impossible</span>
-                <div className="grid-detail-rating">
-                  <Rating rating={image.rating} totalStars={10} />
-                  &nbsp;&nbsp;
-                  <div className="grid-vote-average">{image.rating}</div>
+        {list &&
+          list.map((image) => (
+            <div key={uuidv4()}>
+              <div className="grid-cell" style={{ backgroundImage: `url(${IMAGE_URL}${image.poster_path})` }}>
+                <div className="grid-read-more">
+                  <button className="grid-cell-button">Read More</button>
+                </div>
+                <div className="grid-detail">
+                  <span className="grid-detail-title">{image.title}</span>
+                  <div className="grid-detail-rating">
+                    <Rating rating={image.vote_average} totalStars={10} />
+                    &nbsp;&nbsp;
+                    <div className="grid-vote-average">{image.vote_average}</div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
       </div>
     </>
   );
