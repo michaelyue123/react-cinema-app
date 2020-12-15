@@ -64,7 +64,7 @@ const Main = () => {
     fetchMovieData();
 
     // eslint-disable-next-line
-  }, [currentPage]);
+  }, [dispatch, currentPage]);
 
   const fetchData = () => {
     if (page < totalPages) {
