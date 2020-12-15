@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './SlideShow.scss';
+import { v4 as uuidv4 } from 'uuid';
 import PropTypes from 'prop-types';
 
 const SlideShow = ({ images, isHover }) => {
@@ -82,7 +83,7 @@ const SlideShow = ({ images, isHover }) => {
     const { currentSlide } = props;
     const listIndicators = images.map((image, index) => {
       const buttonClasses = index === currentSlide ? 'slider-navButton slider-navButton--active' : 'slider-navButton';
-      return <button className={buttonClasses} key={image.id} />;
+      return <button className={buttonClasses} key={uuidv4()} />;
     });
 
     return <div className="slider-nav">{listIndicators}</div>;

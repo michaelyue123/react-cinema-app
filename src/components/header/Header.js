@@ -4,7 +4,7 @@ import cinemaLogo from '../../assets/cinema-logo.svg';
 import { useDispatch } from 'react-redux';
 import './Header.scss';
 import { MOVIE_LIST, RESPONSE_PAGE, SET_ERROR } from '../../redux/types';
-import { MOVIE_API_URL } from '../../services/movies.service';
+import { getMovieData } from '../../redux/actions/movies.action';
 
 const HEADER_LIST = [
   {
@@ -49,7 +49,7 @@ function dispatchMovieAction(type, payload) {
         payload
       };
     default:
-      return '';
+      return payload;
   }
 }
 
@@ -59,14 +59,11 @@ const Header = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    async function fetchData() {
+    async function fetchMovieData() {
       try {
-        const response = await MOVIE_API_URL('now_playing', 1);
-        const { results, page, total_pages } = response.data;
-        const payload = {
-          page,
-          totalPages: total_pages
-        };
+        const response = await getMovieData('now_playing', 1);
+        const { results, payload } = response;
+
         dispatch(dispatchMovieAction(MOVIE_LIST, results));
         dispatch(dispatchMovieAction(RESPONSE_PAGE, payload));
       } catch (error) {
@@ -75,7 +72,7 @@ const Header = () => {
         }
       }
     }
-    fetchData();
+    fetchMovieData();
   }, [dispatch]);
 
   const toggleMenu = () => {
