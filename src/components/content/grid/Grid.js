@@ -8,11 +8,11 @@ import LazyImage from '../../lazy-image/LazyImage';
 
 const Grid = () => {
   const list = useSelector((state) => state.movies.list);
-  const [movieData, setMovieData] = useState([]);
+  // const [movieData, setMovieData] = useState([]);
 
-  useEffect(() => {
-    setMovieData(list);
-  }, [list]);
+  // useEffect(() => {
+  //   setMovieData(list);
+  // }, [list]);
 
   return (
     <>
