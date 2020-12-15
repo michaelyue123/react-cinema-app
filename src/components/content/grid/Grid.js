@@ -1,8 +1,16 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Rating from '../rating/Rating';
+import { useSelector } from 'react-redux';
 import './Grid.scss';
 
-const Grid = ({ images }) => {
+const Grid = ({  }) => {
+  const list = useSelector(state => state.movies.list);
+  const [movieData, setMovieData] = useState([]);
+
+  useEffect(() => {
+    setMovieData(list);
+  }, [])
+
   return (
     <>
       <div className="grid">
