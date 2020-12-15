@@ -1,4 +1,4 @@
-import { MOVIE_LIST, RESPONSE_PAGE } from '../types';
+import { MOVIE_LIST, RESPONSE_PAGE, LOAD_MORE_RESULTS } from '../types';
 
 const initialState = {
   list: [],
@@ -19,7 +19,14 @@ export const movieReducer = (state = initialState, action) => {
         page: action.payload.page,
         totalPages: action.payload.totalPages
       };
+    case LOAD_MORE_RESULTS:
+      return {
+        ...state,
+        list: [...state.list, ...action.payload]
+      };
     default:
       return state;
   }
 };
+
+
