@@ -12,7 +12,7 @@ const Grid = () => {
 
   useEffect(() => {
     setMovieData(list);
-  },[list])
+  }, [list]);
 
   return (
     <>
@@ -20,11 +20,7 @@ const Grid = () => {
         {list &&
           list.map((image) => (
             <div key={uuidv4()}>
-              <LazyImage 
-                className="grid-cell" 
-                alt="placeholder"
-                src={`${IMAGE_URL}${image.poster_path}` }
-              >
+              <LazyImage className="grid-cell" alt="placeholder" src={`${IMAGE_URL}${image.poster_path}`}>
                 <div className="grid-read-more">
                   <button className="grid-cell-button">Read More</button>
                 </div>

@@ -63,7 +63,7 @@ const Header = () => {
       try {
         const response = await getMovieData('now_playing', 1);
         const { results, payload } = response;
-  
+
         dispatch(dispatchMovieAction(MOVIE_LIST, results));
         dispatch(dispatchMovieAction(RESPONSE_PAGE, payload));
       } catch (error) {

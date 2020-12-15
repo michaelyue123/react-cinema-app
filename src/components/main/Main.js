@@ -7,7 +7,6 @@ import { loadMoreMovies, setResponsePageNumber } from '../../redux/actions/movie
 import Spinner from '../spinner/Spinner';
 import './Main.scss';
 
-
 // dispatch movie action
 function dispatchAction(type, payload) {
   switch (type) {
@@ -20,7 +19,7 @@ function dispatchAction(type, payload) {
       return {
         type: LOAD_MORE_RESULTS,
         payload
-      }; 
+      };
     case SET_ERROR:
       return {
         type: SET_ERROR,
@@ -33,7 +32,7 @@ function dispatchAction(type, payload) {
 
 const Main = () => {
   const [loading, setLoading] = useState(false);
-  const { page, totalPages } = useSelector(state => state.movies);
+  const { page, totalPages } = useSelector((state) => state.movies);
   const [currentPage, setCurrentPage] = useState(page);
   const mainRef = useRef();
   const bottomLineRef = useRef();
@@ -56,9 +55,8 @@ const Main = () => {
         const { results, payload } = response;
         dispatch(dispatchAction(LOAD_MORE_RESULTS, results));
         dispatch(dispatchAction(RESPONSE_PAGE, payload));
-      }
-      catch(error) {
-        if(error.response) {
+      } catch (error) {
+        if (error.response) {
           dispatch(dispatchAction(SET_ERROR, error.response.data.message));
         }
       }
@@ -69,26 +67,24 @@ const Main = () => {
   }, [currentPage]);
 
   const fetchData = () => {
-    if(page < totalPages) {
+    if (page < totalPages) {
       setCurrentPage((prev) => prev + 1);
     }
-  }
+  };
 
   const handleScroll = () => {
     const containerHeight = mainRef.current.getBoundingClientRect().height;
     const { top: bottomLineTop } = bottomLineRef.current.getBoundingClientRect();
 
-    if(bottomLineTop <= containerHeight) {
+    if (bottomLineTop <= containerHeight) {
       // fetch data
       fetchData();
     }
-  }
+  };
 
   return (
     <div className="main" ref={mainRef} onScroll={() => handleScroll()}>
-      {
-        loading ? <Spinner /> : <MainContent />
-      }
+      {loading ? <Spinner /> : <MainContent />}
       <div ref={bottomLineRef}></div>
     </div>
   );
@@ -100,6 +96,6 @@ Main.propTypes = {
   totalPages: PropTypes.number,
   loadMoreMovies: PropTypes.func,
   setResponsePageNumber: PropTypes.func
-}
+};
 
 export default Main;
