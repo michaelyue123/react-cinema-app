@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import { LOAD_MORE_RESULTS, RESPONSE_PAGE, SET_ERROR } from '../../redux/types';
 import { loadMoreMovies, setResponsePageNumber } from '../../redux/actions/movies.action';
 import Spinner from '../spinner/Spinner';
-import './Main.scss';
 
 // dispatch movie action
 function dispatchAction(type, payload) {
@@ -31,6 +30,13 @@ function dispatchAction(type, payload) {
 }
 
 const Main = () => {
+  const mainStyles = {
+    textAlign: 'center',
+    height: '100vh',
+    backgroungColor: '#020e18',
+    overflowY: 'scroll'
+  }
+
   const [loading, setLoading] = useState(false);
   const { page, totalPages } = useSelector((state) => state.movies);
   const [currentPage, setCurrentPage] = useState(page);
@@ -83,7 +89,7 @@ const Main = () => {
   };
 
   return (
-    <div className="main" ref={mainRef} onScroll={() => handleScroll()}>
+    <div className="main" style={mainStyles} ref={mainRef} onScroll={() => handleScroll()}>
       {loading ? <Spinner /> : <MainContent />}
       <div ref={bottomLineRef}></div>
     </div>
