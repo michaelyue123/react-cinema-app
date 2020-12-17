@@ -35,7 +35,7 @@ const Main = () => {
     height: '100vh',
     backgroungColor: '#020e18',
     overflowY: 'scroll'
-  }
+  };
 
   const [loading, setLoading] = useState(false);
   const { page, totalPages } = useSelector((state) => state.movies);
