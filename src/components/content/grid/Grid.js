@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Rating from '../rating/Rating';
 import { useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
