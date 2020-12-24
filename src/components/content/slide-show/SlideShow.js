@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import './SlideShow.scss';
+import { v4 as uuidv4 } from 'uuid';
 import PropTypes from 'prop-types';
 
-const SlideShow = ({ images, isHover }) => {
+const SlideShow = ({ images }) => {
   const [state, setState] = useState({
     slideShow: images[0],
     slideIndex: 0
@@ -82,7 +83,7 @@ const SlideShow = ({ images, isHover }) => {
     const { currentSlide } = props;
     const listIndicators = images.map((image, index) => {
       const buttonClasses = index === currentSlide ? 'slider-navButton slider-navButton--active' : 'slider-navButton';
-      return <button className={buttonClasses} key={image.id} />;
+      return <button className={buttonClasses} key={uuidv4()} />;
     });
 
     return <div className="slider-nav">{listIndicators}</div>;
@@ -93,7 +94,7 @@ const SlideShow = ({ images, isHover }) => {
       <div className="slider">
         <div className="slider-slides">{images && images.length && slideShow && <div className="slider-image" style={{ backgroundImage: `url(${slideShow.url})` }}></div>}</div>
         <Indicators currentSlide={slideIndex} />
-        {isHover ? <RenderArrows /> : null}
+        <RenderArrows />
       </div>
     </>
   );

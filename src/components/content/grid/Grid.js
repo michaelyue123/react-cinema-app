@@ -13,17 +13,24 @@ const Grid = ({  }) => {
 import { v4 as uuidv4 } from 'uuid';
 import { IMAGE_URL } from '../../../services/movies.service';
 import './Grid.scss';
+import PropTypes from 'prop-types';
+import LazyImage from '../../lazy-image/LazyImage';
 
 const Grid = () => {
   const list = useSelector((state) => state.movies.list);
+  const [movieData, setMovieData] = useState([]);
+
+  useEffect(() => {
+    setMovieData(list);
+  }, [list]);
 
   return (
     <>
       <div className="grid">
-        {list &&
-          list.map((image) => (
+        {movieData &&
+          movieData.map((image) => (
             <div key={uuidv4()}>
-              <div className="grid-cell" style={{ backgroundImage: `url(${IMAGE_URL}${image.poster_path})` }}>
+              <LazyImage className="grid-cell" alt="placeholder" src={`${IMAGE_URL}${image.poster_path}`}>
                 <div className="grid-read-more">
                   <button className="grid-cell-button">Read More</button>
                 </div>
@@ -35,12 +42,16 @@ const Grid = () => {
                     <div className="grid-vote-average">{image.vote_average}</div>
                   </div>
                 </div>
-              </div>
+              </LazyImage>
             </div>
           ))}
       </div>
     </>
   );
+};
+
+Grid.propTypes = {
+  list: PropTypes.array
 };
 
 export default Grid;
