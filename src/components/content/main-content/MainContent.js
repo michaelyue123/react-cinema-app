@@ -2,73 +2,109 @@ import React, { useState, useEffect } from 'react';
 import Grid from '../grid/Grid';
 import Paginate from '../paginate/Paginate';
 import SlideShow from '../slide-show/SlideShow';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import { IMAGE_URL } from '../../../services/movies.service';
+import { getMovieData, setResponsePageNumber } from '../../../redux/actions/movies.action';
 import './MainContent.scss';
+import { MOVIE_LIST, RESPONSE_PAGE, SET_ERROR } from '../../../redux/types';
+
+// dispatch movie action
+function dispatchAction(type, payload) {
+  switch (type) {
+    case MOVIE_LIST:
+      return {
+        type: MOVIE_LIST,
+        payload
+      };
+    case RESPONSE_PAGE:
+      return {
+        type: RESPONSE_PAGE,
+        payload
+      };
+    case SET_ERROR:
+      return {
+        type: SET_ERROR,
+        payload
+      };
+    default:
+      return payload;
+  }
+}
 
 const MainContent = () => {
-  const [isHover, setIsHover] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const list = useSelector((state) => state.movies.list);
+  const { list, page, totalPages, movieType } = useSelector((state) => state.movies);
+  const [currentPage, setCurrentPage] = useState(page);
   const [images, setImages] = useState([]);
-  let randomMovies;
+  const dispatch = useDispatch();
 
-  if (list) {
-    randomMovies = list.sort(() => Math.random() - Math.random()).slice(0, 4);
-  }
+  const randomMovies = list.sort(() => Math.random() - Math.random()).slice(0, 4);
+
+  const HEADER_TYPE = {
+    now_playing: 'Now Playing',
+    popular: 'Popular',
+    top_rated: 'Top Rated',
+    upcoming: 'Upcoming'
+  };
 
   useEffect(() => {
     if (randomMovies.length) {
       const IMAGES = [
         {
-          id: list[0].id,
-          url: `${IMAGE_URL}/${randomMovies[0].backdrop_path}`,
-          rating: list[0].vote_average,
-          title: list[0].title
+          id: 1,
+          url: `${IMAGE_URL}${randomMovies[0].backdrop_path}`
         },
         {
-          id: list[1].id,
-          url: `${IMAGE_URL}/${randomMovies[1].backdrop_path}`,
-          rating: list[1].vote_average,
-          title: list[1].title
+          id: 2,
+          url: `${IMAGE_URL}${randomMovies[1].backdrop_path}`
         },
         {
-          id: list[2].id,
-          url: `${IMAGE_URL}/${randomMovies[2].backdrop_path}`,
-          rating: list[2].vote_average,
-          title: list[2].title
+          id: 3,
+          url: `${IMAGE_URL}${randomMovies[2].backdrop_path}`
         },
         {
-          id: list[3].id,
-          url: `${IMAGE_URL}/${randomMovies[3].backdrop_path}`,
-          rating: list[3].vote_average,
-          title: list[3].title
+          id: 4,
+          url: `${IMAGE_URL}${randomMovies[3].backdrop_path}`
         }
       ];
       setImages(IMAGES);
     }
-
     // eslint-disable-next-line
   }, []);
 
-  const paginate = (type) => {
-    if (type === 'prev' && currentPage > 1) {
-      setCurrentPage((prev) => prev - 1);
+  useEffect(() => {
+    setCurrentPage(page);
+    // eslint-disable-next-line
+  }, [page, totalPages]);
+
+  const paginate = async (type) => {
+    let pageNumber = currentPage;
+    if (type === 'prev' && currentPage >= 1) {
+      pageNumber -= 1;
     } else {
-      setCurrentPage((prev) => prev + 1);
+      pageNumber += 1;
+    }
+    setCurrentPage(pageNumber);
+    try {
+      const newPayload = setResponsePageNumber(pageNumber, totalPages);
+      dispatch(dispatchAction(RESPONSE_PAGE, newPayload));
+
+      const payload = await getMovieData(movieType, pageNumber);
+      dispatch(dispatchAction(MOVIE_LIST, payload.results));
+    } catch (error) {
+      if (error.response) {
+        dispatch(dispatchAction(SET_ERROR, error.response.data.message));
+      }
     }
   };
 
   return (
     <div className="main-content">
-      <div onMouseEnter={() => setIsHover(true)} onMouseLeave={() => setIsHover(false)}>
-        <SlideShow images={images} isHover={isHover} />
-      </div>
+      <SlideShow images={images} />
       <div className="grid-movie-title">
-        <div className="movieType">Now Playing</div>
+        <div className="movieType">{HEADER_TYPE[movieType]}</div>
         <div className="paginate">
-          <Paginate currentPage={currentPage} totalPages={10} paginate={paginate} />
+          <Paginate currentPage={currentPage} totalPages={totalPages} paginate={paginate} />
         </div>
       </div>
       <Grid />
@@ -77,7 +113,12 @@ const MainContent = () => {
 };
 
 MainContent.propTypes = {
-  list: PropTypes.array
+  list: PropTypes.array,
+  movieType: PropTypes.string,
+  totalPages: PropTypes.number,
+  page: PropTypes.number,
+  getMovieData: PropTypes.func,
+  setResponsePageNumber: PropTypes.func
 };
 
 export default MainContent;

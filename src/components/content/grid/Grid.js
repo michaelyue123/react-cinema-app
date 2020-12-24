@@ -1,24 +1,25 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Rating from '../rating/Rating';
 import { useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import { IMAGE_URL } from '../../../services/movies.service';
 import './Grid.scss';
+import PropTypes from 'prop-types';
 import LazyImage from '../../lazy-image/LazyImage';
 
 const Grid = () => {
   const list = useSelector((state) => state.movies.list);
-  // const [movieData, setMovieData] = useState([]);
+  const [movieData, setMovieData] = useState([]);
 
-  // useEffect(() => {
-  //   setMovieData(list);
-  // }, [list]);
+  useEffect(() => {
+    setMovieData(list);
+  }, [list]);
 
   return (
     <>
       <div className="grid">
-        {list &&
-          list.map((image) => (
+        {movieData &&
+          movieData.map((image) => (
             <div key={uuidv4()}>
               <LazyImage className="grid-cell" alt="placeholder" src={`${IMAGE_URL}${image.poster_path}`}>
                 <div className="grid-read-more">
@@ -38,6 +39,10 @@ const Grid = () => {
       </div>
     </>
   );
+};
+
+Grid.propTypes = {
+  list: PropTypes.array
 };
 
 export default Grid;
