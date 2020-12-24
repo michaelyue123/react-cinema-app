@@ -3,7 +3,7 @@ import './SlideShow.scss';
 import { v4 as uuidv4 } from 'uuid';
 import PropTypes from 'prop-types';
 
-const SlideShow = ({ images, isHover }) => {
+const SlideShow = ({ images }) => {
   const [state, setState] = useState({
     slideShow: images[0],
     slideIndex: 0
@@ -94,7 +94,7 @@ const SlideShow = ({ images, isHover }) => {
       <div className="slider">
         <div className="slider-slides">{images && images.length && slideShow && <div className="slider-image" style={{ backgroundImage: `url(${slideShow.url})` }}></div>}</div>
         <Indicators currentSlide={slideIndex} />
-        {isHover ? <RenderArrows /> : null}
+        <RenderArrows />
       </div>
     </>
   );

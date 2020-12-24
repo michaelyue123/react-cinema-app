@@ -38,7 +38,7 @@ const Main = () => {
   };
 
   const [loading, setLoading] = useState(false);
-  const { page, totalPages } = useSelector((state) => state.movies);
+  const { page, totalPages, movieType } = useSelector((state) => state.movies);
   const [currentPage, setCurrentPage] = useState(page);
   const mainRef = useRef();
   const bottomLineRef = useRef();
@@ -54,13 +54,8 @@ const Main = () => {
   useEffect(() => {
     async function fetchMovieData() {
       try {
-        const newPayload = await setResponsePageNumber(currentPage, totalPages);
+        const newPayload = setResponsePageNumber(currentPage, totalPages);
         dispatch(dispatchAction(RESPONSE_PAGE, newPayload));
-
-        const response = await loadMoreMovies('now_playing', currentPage);
-        const { results, payload } = response;
-        dispatch(dispatchAction(LOAD_MORE_RESULTS, results));
-        dispatch(dispatchAction(RESPONSE_PAGE, payload));
       } catch (error) {
         if (error.response) {
           dispatch(dispatchAction(SET_ERROR, error.response.data.message));
@@ -70,11 +65,16 @@ const Main = () => {
     fetchMovieData();
 
     // eslint-disable-next-line
-  }, [dispatch, currentPage]);
+  }, [dispatch, currentPage, totalPages]);
 
-  const fetchData = () => {
+  const fetchData = async () => {
+    let pageNumber = currentPage;
     if (page < totalPages) {
-      setCurrentPage((prev) => prev + 1);
+      pageNumber += 1;
+      setCurrentPage(pageNumber);
+      const response = await loadMoreMovies(movieType, pageNumber);
+      const { results, payload } = response;
+      dispatch(dispatchAction(LOAD_MORE_RESULTS, { results, page: payload.page, totalPages: payload.totalPages }));
     }
   };
 
@@ -101,7 +101,8 @@ Main.propTypes = {
   page: PropTypes.number,
   totalPages: PropTypes.number,
   loadMoreMovies: PropTypes.func,
-  setResponsePageNumber: PropTypes.func
+  setResponsePageNumber: PropTypes.func,
+  movieType: PropTypes.string
 };
 
 export default Main;
