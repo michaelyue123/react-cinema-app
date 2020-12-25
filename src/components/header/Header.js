@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import './Header.scss';
 import { MOVIE_LIST, MOVIE_TYPE, RESPONSE_PAGE, SET_ERROR, SEARCH_QUERY, SEARCH_RESULT } from '../../redux/types';
 import { getMovieData, setMovieType, setResponsePageNumber, searchMovieQuery, searchMovieResult } from '../../redux/actions/movies.action';
+import { useHistory } from 'react-router-dom';
 
 const HEADER_LIST = [
   {
@@ -78,6 +79,7 @@ const Header = () => {
   const [page] = useState(1);
   const [search, setSearch] = useState('');
   const dispatch = useDispatch();
+  const history = useHistory();
 
   useEffect(() => {
     async function fetchMovieData() {
@@ -129,6 +131,10 @@ const Header = () => {
     }
   };
 
+  const navigateToHomePage = () => {
+    history.push('/');
+  };
+
   const toggleMenu = () => {
     setNavClass(!navClass);
     setMenuClass(!menuClass);
@@ -144,7 +150,7 @@ const Header = () => {
       <div className="header-nav-wrapper">
         <div className="header-bar"></div>
         <div className="header-navbar">
-          <div className="header-image">
+          <div className="header-image" onClick={() => navigateToHomePage()}>
             <img src={cinemaLogo} alt="" />
           </div>
           <div className={`${menuClass ? 'header-menu-toggle is-active' : 'header-menu-toggle'}`} id="header-mobile-menu" onClick={() => toggleMenu()}>

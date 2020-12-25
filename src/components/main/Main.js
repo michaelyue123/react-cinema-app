@@ -45,8 +45,6 @@ const Main = () => {
   const bottomLineRef = useRef();
   const dispatch = useDispatch();
 
-  console.log(searchResult);
-
   useEffect(() => {
     setLoading(true);
     setTimeout(() => {
