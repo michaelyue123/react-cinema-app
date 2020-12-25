@@ -170,8 +170,8 @@ const Header = () => {
                 </li>
               ))}
             <input className="search-input" type="text" placeholder="Search for a movie" value={search} onChange={onSearchChange} />
-            <button type="button" id="search" className="btn btn-primary" onClick={onClickSearch}>
-              Search
+            <button type="button" id="search" className="btn btn-primary btn-sm" onClick={onClickSearch}>
+              <i className="fa fa-search"></i>
             </button>
           </ul>
         </div>
