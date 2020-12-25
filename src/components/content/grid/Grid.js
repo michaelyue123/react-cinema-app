@@ -2,17 +2,8 @@ import React, { useState, useEffect } from 'react';
 import Rating from '../rating/Rating';
 import { useSelector } from 'react-redux';
 import './Grid.scss';
-
-const Grid = ({  }) => {
-  const list = useSelector(state => state.movies.list);
-  const [movieData, setMovieData] = useState([]);
-
-  useEffect(() => {
-    setMovieData(list);
-  }, [])
 import { v4 as uuidv4 } from 'uuid';
 import { IMAGE_URL } from '../../../services/movies.service';
-import './Grid.scss';
 import PropTypes from 'prop-types';
 import LazyImage from '../../lazy-image/LazyImage';
 
