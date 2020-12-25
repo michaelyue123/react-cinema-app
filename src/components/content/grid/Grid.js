@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { IMAGE_URL } from '../../../services/movies.service';
 import PropTypes from 'prop-types';
 import LazyImage from '../../lazy-image/LazyImage';
+import { Link } from 'react-router-dom';
 
 const Grid = () => {
   const list = useSelector((state) => state.movies.list);
@@ -15,6 +16,11 @@ const Grid = () => {
     setMovieData(list);
   }, [list]);
 
+  const formatMovieTitle = (title) => {
+    const titleStr = title.toLowerCase();
+    return titleStr.replace(/ /g, '-');
+  };
+
   return (
     <>
       <div className="grid">
@@ -23,7 +29,9 @@ const Grid = () => {
             <div key={uuidv4()}>
               <LazyImage className="grid-cell" alt="placeholder" src={`${IMAGE_URL}${image.poster_path}`}>
                 <div className="grid-read-more">
-                  <button className="grid-cell-button">Read More</button>
+                  <button className="grid-cell-button">
+                    <Link to={`/${image.id}/${formatMovieTitle(image.title)}/details`}>Read More</Link>
+                  </button>
                 </div>
                 <div className="grid-detail">
                   <span className="grid-detail-title">{image.title}</span>

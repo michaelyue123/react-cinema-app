@@ -33,6 +33,10 @@
     margin-top: -5px;
 }
 
+.header-image:hover {
+    cursor: pointer;
+}
+
 .header-nav {
     grid-area: menu;
     margin-right: 25px;
