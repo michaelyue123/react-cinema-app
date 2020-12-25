@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import { LOAD_MORE_RESULTS, RESPONSE_PAGE, SET_ERROR } from '../../redux/types';
 import { loadMoreMovies, setResponsePageNumber } from '../../redux/actions/movies.action';
 import Spinner from '../spinner/Spinner';
+import SearchResult from '../content/search-result/SearchResult';
 
 // dispatch movie action
 function dispatchAction(type, payload) {
@@ -38,11 +39,13 @@ const Main = () => {
   };
 
   const [loading, setLoading] = useState(false);
-  const { page, totalPages, movieType } = useSelector((state) => state.movies);
+  const { page, totalPages, movieType, searchResult } = useSelector((state) => state.movies);
   const [currentPage, setCurrentPage] = useState(page);
   const mainRef = useRef();
   const bottomLineRef = useRef();
   const dispatch = useDispatch();
+
+  console.log(searchResult);
 
   useEffect(() => {
     setLoading(true);
@@ -90,7 +93,7 @@ const Main = () => {
 
   return (
     <div className="main" style={mainStyles} ref={mainRef} onScroll={() => handleScroll()}>
-      {loading ? <Spinner /> : <MainContent />}
+      {loading ? <Spinner /> : <>{searchResult && searchResult.length === 0 ? <MainContent /> : <SearchResult />}</>}
       <div ref={bottomLineRef}></div>
     </div>
   );
@@ -102,7 +105,8 @@ Main.propTypes = {
   totalPages: PropTypes.number,
   loadMoreMovies: PropTypes.func,
   setResponsePageNumber: PropTypes.func,
-  movieType: PropTypes.string
+  movieType: PropTypes.string,
+  searchResult: PropTypes.array
 };
 
 export default Main;

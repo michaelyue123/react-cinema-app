@@ -3,8 +3,8 @@ import cinemaLogo from '../../assets/cinema-logo.svg';
 import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import './Header.scss';
-import { MOVIE_LIST, MOVIE_TYPE, RESPONSE_PAGE, SET_ERROR } from '../../redux/types';
-import { getMovieData, setMovieType, setResponsePageNumber } from '../../redux/actions/movies.action';
+import { MOVIE_LIST, MOVIE_TYPE, RESPONSE_PAGE, SET_ERROR, SEARCH_QUERY, SEARCH_RESULT } from '../../redux/types';
+import { getMovieData, setMovieType, setResponsePageNumber, searchMovieQuery, searchMovieResult } from '../../redux/actions/movies.action';
 
 const HEADER_LIST = [
   {
@@ -56,6 +56,16 @@ function dispatchMovieAction(type, payload) {
         type: MOVIE_TYPE,
         payload
       };
+    case SEARCH_QUERY:
+      return {
+        type: SEARCH_QUERY,
+        payload
+      };
+    case SEARCH_RESULT:
+      return {
+        type: SEARCH_RESULT,
+        payload
+      };
     default:
       return payload;
   }
@@ -66,6 +76,7 @@ const Header = () => {
   const [menuClass, setMenuClass] = useState(false);
   const [type, setType] = useState('now_playing');
   const [page] = useState(1);
+  const [search, setSearch] = useState('');
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -74,12 +85,14 @@ const Header = () => {
         const response = await getMovieData(type, page);
         const { results, payload } = response;
 
+        console.log(type);
+
         dispatch(dispatchMovieAction(MOVIE_LIST, results));
 
         const response_1 = setResponsePageNumber(payload.page, payload.totalPages);
         dispatch(dispatchMovieAction(RESPONSE_PAGE, response_1));
       } catch (error) {
-        if (error) {
+        if (error.response) {
           dispatch(dispatchMovieAction(SET_ERROR, error.response.data.message));
         }
       }
@@ -89,10 +102,31 @@ const Header = () => {
     //eslint-disable-next-line
   }, [type]);
 
-  const setMovieTypeUrl = (type) => {
+  const setMovieTypeUrl = async (type) => {
     setType(type);
     const clickedType = setMovieType(type);
     dispatch(dispatchMovieAction(MOVIE_TYPE, clickedType));
+
+    dispatch(dispatchMovieAction(SEARCH_RESULT, []));
+  };
+
+  const onSearchChange = async (e) => {
+    const { value } = e.target;
+    setSearch(value);
+  };
+
+  const onClickSearch = async () => {
+    try {
+      const response = searchMovieQuery(search);
+      dispatch(dispatchMovieAction(SEARCH_QUERY, response));
+
+      const response_1 = await searchMovieResult(search);
+      dispatch(dispatchMovieAction(SEARCH_RESULT, response_1));
+    } catch (error) {
+      if (error.response) {
+        dispatch(dispatchMovieAction(SET_ERROR, error.response.data.message));
+      }
+    }
   };
 
   const toggleMenu = () => {
@@ -129,7 +163,10 @@ const Header = () => {
                   <span className="header-list-name">{data.name}</span>
                 </li>
               ))}
-            <input className="search-input" type="text" placeholder="Search for a movie" />
+            <input className="search-input" type="text" placeholder="Search for a movie" value={search} onChange={onSearchChange} />
+            <button type="button" id="search" className="btn btn-primary" onClick={onClickSearch}>
+              Search
+            </button>
           </ul>
         </div>
       </div>
@@ -143,7 +180,9 @@ Header.propTypes = {
   setResponsePageNumber: PropTypes.func,
   list: PropTypes.array,
   page: PropTypes.number,
-  totalPages: PropTypes.number
+  totalPages: PropTypes.number,
+  searchQuery: PropTypes.func,
+  searchResult: PropTypes.func
 };
 
 export default Header;
