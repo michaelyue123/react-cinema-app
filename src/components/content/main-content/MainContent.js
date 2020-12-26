@@ -32,7 +32,7 @@ function dispatchAction(type, payload) {
   }
 }
 
-const MainContent = () => {
+const MainContent = ({ onClick }) => {
   const { list, page, totalPages, movieType } = useSelector((state) => state.movies);
   const [currentPage, setCurrentPage] = useState(page);
   const [images, setImages] = useState([]);
@@ -107,7 +107,7 @@ const MainContent = () => {
           <Paginate currentPage={currentPage} totalPages={totalPages} paginate={paginate} />
         </div>
       </div>
-      <Grid />
+      <Grid onClick={onClick} />
     </div>
   );
 };

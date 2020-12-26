@@ -6,6 +6,7 @@ import { LOAD_MORE_RESULTS, RESPONSE_PAGE, SET_ERROR } from '../../redux/types';
 import { loadMoreMovies, setResponsePageNumber } from '../../redux/actions/movies.action';
 import Spinner from '../spinner/Spinner';
 import SearchResult from '../content/search-result/SearchResult';
+import { useHistory } from 'react-router-dom';
 
 // dispatch movie action
 function dispatchAction(type, payload) {
@@ -30,7 +31,7 @@ function dispatchAction(type, payload) {
   }
 }
 
-const Main = () => {
+const Main = ({ onClick }) => {
   const mainStyles = {
     textAlign: 'center',
     height: '100vh',
@@ -44,6 +45,7 @@ const Main = () => {
   const mainRef = useRef();
   const bottomLineRef = useRef();
   const dispatch = useDispatch();
+  const history = useHistory();
 
   useEffect(() => {
     setLoading(true);
@@ -89,9 +91,13 @@ const Main = () => {
     }
   };
 
+  const onClickChange = () => {
+    history.push('/searchResults');
+  };
+
   return (
     <div className="main" style={mainStyles} ref={mainRef} onScroll={() => handleScroll()}>
-      {loading ? <Spinner /> : <>{searchResult && searchResult.length === 0 ? <MainContent /> : <SearchResult />}</>}
+      {loading ? <Spinner /> : <>{searchResult && searchResult.length === 0 ? <MainContent onClick={onClick} /> : <SearchResult onClick={onClickChange} />}</>}
       <div ref={bottomLineRef}></div>
     </div>
   );
