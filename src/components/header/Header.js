@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import cinemaLogo from '../../assets/cinema-logo.svg';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import './Header.scss';
 import { MOVIE_LIST, MOVIE_TYPE, RESPONSE_PAGE, SET_ERROR, SEARCH_QUERY, SEARCH_RESULT, CLEAR_MOVIE_DETAILS } from '../../redux/types';
@@ -83,7 +83,6 @@ const Header = ({ disableSearch, onClick }) => {
   const [type, setType] = useState('now_playing');
   const [page] = useState(1);
   const [search, setSearch] = useState('');
-  const searchResult = useSelector((state) => state.movies);
 
   const dispatch = useDispatch();
   const history = useHistory();
@@ -114,7 +113,7 @@ const Header = ({ disableSearch, onClick }) => {
     if (location.pathname !== '/') {
       const result = clearMovieDetails([]);
       dispatch(dispatchMovieAction(CLEAR_MOVIE_DETAILS, result));
-      history.push('/main');
+      history.push('/');
       setType('now_playing');
       setMovieType('now_playing');
       onClick();
@@ -127,9 +126,7 @@ const Header = ({ disableSearch, onClick }) => {
 
   const onSearchChange = async (e) => {
     const { value } = e.target;
-    if (value) {
-      setSearch(value);
-    }
+    setSearch(value);
   };
 
   const onClickSearch = async () => {
@@ -139,10 +136,6 @@ const Header = ({ disableSearch, onClick }) => {
 
       const response_1 = await searchMovieResult(search);
       dispatch(dispatchMovieAction(SEARCH_RESULT, response_1));
-
-      if (searchResult && searchResult.length > 0) {
-        history.push('/searchResults');
-      }
     } catch (error) {
       if (error.response) {
         dispatch(dispatchMovieAction(SET_ERROR, error.response.data.message));
@@ -159,7 +152,10 @@ const Header = ({ disableSearch, onClick }) => {
         onClick();
       }
 
-      history.push('/main');
+      dispatch(dispatchMovieAction(SEARCH_RESULT, []));
+      setType('now_playing');
+      setMovieType('now_playing');
+      history.push('/');
     } catch (error) {
       if (error.response) {
         dispatch(dispatchMovieAction(SET_ERROR, error.response.data.message));

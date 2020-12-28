@@ -21,7 +21,7 @@ const App = () => {
         <Header disableSearch={disableSearch} onClick={onClickChange} />
         <div className="app">
           <Switch>
-            <Route exact path="/main" render={(props) => <Main {...props} onClick={onClickChange} />} />
+            <Route exact path="/" render={(props) => <Main {...props} onClick={onClickChange} />} />
             <Route exact path="/:id/:name/details" component={Details} />
             <Route exact path="/searchResults" component={SearchResult} />
           </Switch>

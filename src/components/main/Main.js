@@ -92,6 +92,7 @@ const Main = ({ onClick }) => {
   };
 
   const onClickChange = () => {
+    console.log('1234');
     history.push('/searchResults');
   };
 
