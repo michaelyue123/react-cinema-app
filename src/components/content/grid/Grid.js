@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import LazyImage from '../../lazy-image/LazyImage';
 import { Link } from 'react-router-dom';
 
-const Grid = () => {
+const Grid = ({ onClick }) => {
   const list = useSelector((state) => state.movies.list);
   const [movieData, setMovieData] = useState([]);
 
@@ -30,7 +30,9 @@ const Grid = () => {
               <LazyImage className="grid-cell" alt="placeholder" src={`${IMAGE_URL}${image.poster_path}`}>
                 <div className="grid-read-more">
                   <button className="grid-cell-button">
-                    <Link to={`/${image.id}/${formatMovieTitle(image.title)}/details`}>Read More</Link>
+                    <Link to={`/${image.id}/${formatMovieTitle(image.title)}/details`} onClick={onClick}>
+                      Read More
+                    </Link>
                   </button>
                 </div>
                 <div className="grid-detail">

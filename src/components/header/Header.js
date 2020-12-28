@@ -3,9 +3,9 @@ import cinemaLogo from '../../assets/cinema-logo.svg';
 import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import './Header.scss';
-import { MOVIE_LIST, MOVIE_TYPE, RESPONSE_PAGE, SET_ERROR, SEARCH_QUERY, SEARCH_RESULT } from '../../redux/types';
-import { getMovieData, setMovieType, setResponsePageNumber, searchMovieQuery, searchMovieResult } from '../../redux/actions/movies.action';
-import { useHistory } from 'react-router-dom';
+import { MOVIE_LIST, MOVIE_TYPE, RESPONSE_PAGE, SET_ERROR, SEARCH_QUERY, SEARCH_RESULT, CLEAR_MOVIE_DETAILS } from '../../redux/types';
+import { getMovieData, setMovieType, setResponsePageNumber, searchMovieQuery, searchMovieResult, clearMovieDetails } from '../../redux/actions/movies.action';
+import { useHistory, useLocation } from 'react-router-dom';
 
 const HEADER_LIST = [
   {
@@ -67,27 +67,32 @@ function dispatchMovieAction(type, payload) {
         type: SEARCH_RESULT,
         payload
       };
+    case CLEAR_MOVIE_DETAILS:
+      return {
+        type: CLEAR_MOVIE_DETAILS,
+        payload
+      };
     default:
       return payload;
   }
 }
 
-const Header = () => {
+const Header = ({ disableSearch, onClick }) => {
   const [navClass, setNavClass] = useState(false);
   const [menuClass, setMenuClass] = useState(false);
   const [type, setType] = useState('now_playing');
   const [page] = useState(1);
   const [search, setSearch] = useState('');
+
   const dispatch = useDispatch();
   const history = useHistory();
+  const location = useLocation();
 
   useEffect(() => {
     async function fetchMovieData() {
       try {
         const response = await getMovieData(type, page);
         const { results, payload } = response;
-
-        console.log(type);
 
         dispatch(dispatchMovieAction(MOVIE_LIST, results));
 
@@ -105,11 +110,18 @@ const Header = () => {
   }, [type]);
 
   const setMovieTypeUrl = async (type) => {
-    setType(type);
-    const clickedType = setMovieType(type);
-    dispatch(dispatchMovieAction(MOVIE_TYPE, clickedType));
-
-    dispatch(dispatchMovieAction(SEARCH_RESULT, []));
+    if (location.pathname !== '/') {
+      const result = clearMovieDetails([]);
+      dispatch(dispatchMovieAction(CLEAR_MOVIE_DETAILS, result));
+      history.push('/');
+      setType('now_playing');
+      setMovieType('now_playing');
+      onClick();
+    } else {
+      setType(type);
+      const clickedType = setMovieType(type);
+      dispatch(dispatchMovieAction(MOVIE_TYPE, clickedType));
+    }
   };
 
   const onSearchChange = async (e) => {
@@ -132,7 +144,23 @@ const Header = () => {
   };
 
   const navigateToHomePage = () => {
-    history.push('/');
+    try {
+      const result = clearMovieDetails([]);
+      dispatch(dispatchMovieAction(CLEAR_MOVIE_DETAILS, result));
+
+      if (location.pathname !== '/') {
+        onClick();
+      }
+
+      dispatch(dispatchMovieAction(SEARCH_RESULT, []));
+      setType('now_playing');
+      setMovieType('now_playing');
+      history.push('/');
+    } catch (error) {
+      if (error.response) {
+        dispatch(dispatchMovieAction(SET_ERROR, error.response.data.message));
+      }
+    }
   };
 
   const toggleMenu = () => {
@@ -169,10 +197,17 @@ const Header = () => {
                   <span className="header-list-name">{data.name}</span>
                 </li>
               ))}
-            <input className="search-input" type="text" placeholder="Search for a movie" value={search} onChange={onSearchChange} />
-            <button type="button" id="search" className="btn btn-primary btn-sm" onClick={onClickSearch}>
-              <i className="fa fa-search"></i>
-            </button>
+
+            {disableSearch ? (
+              <div></div>
+            ) : (
+              <>
+                <input className="search-input" type="text" placeholder="Search for a movie" value={search} onChange={onSearchChange} />
+                <button type="button" id="search" className="btn btn-primary btn-sm" onClick={onClickSearch}>
+                  <i className="fa fa-search"></i>
+                </button>
+              </>
+            )}
           </ul>
         </div>
       </div>
