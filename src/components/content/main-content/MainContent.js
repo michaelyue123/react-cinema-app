@@ -1,54 +1,124 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Grid from '../grid/Grid';
 import Paginate from '../paginate/Paginate';
 import SlideShow from '../slide-show/SlideShow';
+import { useSelector, useDispatch } from 'react-redux';
+import PropTypes from 'prop-types';
+import { IMAGE_URL } from '../../../services/movies.service';
+import { getMovieData, setResponsePageNumber } from '../../../redux/actions/movies.action';
 import './MainContent.scss';
+import { MOVIE_LIST, RESPONSE_PAGE, SET_ERROR } from '../../../redux/types';
 
-const MainContent = () => {
-  const [isHover, setIsHover] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
+// dispatch movie action
+function dispatchAction(type, payload) {
+  switch (type) {
+    case MOVIE_LIST:
+      return {
+        type: MOVIE_LIST,
+        payload
+      };
+    case RESPONSE_PAGE:
+      return {
+        type: RESPONSE_PAGE,
+        payload
+      };
+    case SET_ERROR:
+      return {
+        type: SET_ERROR,
+        payload
+      };
+    default:
+      return payload;
+  }
+}
 
-  const paginate = (type) => {
-    if (type === 'prev' && currentPage > 1) {
-      setCurrentPage((prev) => prev - 1);
+const MainContent = ({ onClick }) => {
+  const { list, page, totalPages, movieType } = useSelector((state) => state.movies);
+  const [currentPage, setCurrentPage] = useState(page);
+  const [images, setImages] = useState([]);
+  const dispatch = useDispatch();
+
+  const randomMovies = list.sort(() => Math.random() - Math.random()).slice(0, 4);
+
+  const HEADER_TYPE = {
+    now_playing: 'Now Playing',
+    popular: 'Popular',
+    top_rated: 'Top Rated',
+    upcoming: 'Upcoming'
+  };
+
+  useEffect(() => {
+    if (randomMovies.length) {
+      const IMAGES = [
+        {
+          id: 1,
+          url: `${IMAGE_URL}${randomMovies[0].backdrop_path}`
+        },
+        {
+          id: 2,
+          url: `${IMAGE_URL}${randomMovies[1].backdrop_path}`
+        },
+        {
+          id: 3,
+          url: `${IMAGE_URL}${randomMovies[2].backdrop_path}`
+        },
+        {
+          id: 4,
+          url: `${IMAGE_URL}${randomMovies[3].backdrop_path}`
+        }
+      ];
+      setImages(IMAGES);
+    }
+    // eslint-disable-next-line
+  }, []);
+
+  useEffect(() => {
+    setCurrentPage(page);
+    // eslint-disable-next-line
+  }, [page, totalPages]);
+
+  const paginate = async (type) => {
+    let pageNumber = currentPage;
+    if (type === 'prev' && currentPage >= 1) {
+      pageNumber -= 1;
     } else {
-      setCurrentPage((prev) => prev + 1);
+      pageNumber += 1;
+    }
+    setCurrentPage(pageNumber);
+    try {
+      const newPayload = setResponsePageNumber(pageNumber, totalPages);
+      dispatch(dispatchAction(RESPONSE_PAGE, newPayload));
+
+      const payload = await getMovieData(movieType, pageNumber);
+      dispatch(dispatchAction(MOVIE_LIST, payload.results));
+    } catch (error) {
+      if (error.response) {
+        dispatch(dispatchAction(SET_ERROR, error.response.data.message));
+      }
     }
   };
 
-  const images = [
-    {
-      url: 'https://i.pinimg.com/originals/af/8d/63/af8d63a477078732b79ff9d9fc60873f.jpg',
-      rating: 7.5
-    },
-    {
-      url: 'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__340.jpg',
-      rating: 9.5
-    },
-    {
-      url: 'https://lumiere-a.akamaihd.net/v1/images/sa_pixar_virtualbg_coco_16x9_9ccd7110.jpeg?region=0,0,1920,1080',
-      rating: 8.0
-    },
-    {
-      url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRcBFvwWwx5kb2YQ3-hgYq_LuBMzL_mcm6Ww&usqp=CAU',
-      rating: 6.5
-    }
-  ];
-
   return (
     <div className="main-content">
-      <div onMouseEnter={() => setIsHover(true)} onMouseLeave={() => setIsHover(false)}>
-        <SlideShow images={images} isHover={isHover} />
-      </div>
+      <SlideShow images={images} />
       <div className="grid-movie-title">
-        <div className="movieType">Now Playing</div>
+        <div className="movieType">{HEADER_TYPE[movieType]}</div>
         <div className="paginate">
-          <Paginate currentPage={currentPage} totalPages={10} paginate={paginate} />
+          <Paginate currentPage={currentPage} totalPages={totalPages} paginate={paginate} />
         </div>
       </div>
-      <Grid images={images} />
+      <Grid onClick={onClick} />
     </div>
   );
+};
+
+MainContent.propTypes = {
+  list: PropTypes.array,
+  movieType: PropTypes.string,
+  totalPages: PropTypes.number,
+  page: PropTypes.number,
+  getMovieData: PropTypes.func,
+  setResponsePageNumber: PropTypes.func
 };
 
 export default MainContent;
