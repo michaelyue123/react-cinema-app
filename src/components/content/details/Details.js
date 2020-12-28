@@ -12,6 +12,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import { MOVIE_DETAILS, SET_ERROR } from '../../../redux/types';
 import { IMAGE_URL } from '../../../services/movies.service';
+import Spinner from '../../spinner/Spinner';
 
 // dispatch movie action
 function dispatchMovieAction(type, payload) {
@@ -35,7 +36,15 @@ const Details = () => {
   const movie = useSelector((state) => state.movies.movie);
   const { id } = useParams();
   const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
   const [details, setDetails] = useState();
+
+  useEffect(() => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+  }, []);
 
   useEffect(() => {
     const fetchMovieDetails = async () => {
@@ -58,45 +67,49 @@ const Details = () => {
 
   return (
     <>
-      {details && (
-        <div className="movie-container">
-          <div className="movie-bg" style={{ backgroundImage: `url(${IMAGE_URL}${details.backdrop_path})` }}></div>
-          <div className="movie-overlay"></div>
-          <div className="movie-details">
-            <div className="movie-image">
-              <img src={`${IMAGE_URL}${details.poster_path}`} alt="" />
-            </div>
-            <div className="movie-body">
-              <div className="movie-overview">
-                <div className="title">
-                  {details.title} <span>{details.release_date}</span>
+      {loading ? (
+        <Spinner />
+      ) : (
+        details && (
+          <div className="movie-container">
+            <div className="movie-bg" style={{ backgroundImage: `url(${IMAGE_URL}${details.backdrop_path})` }}></div>
+            <div className="movie-overlay"></div>
+            <div className="movie-details">
+              <div className="movie-image">
+                <img src={`${IMAGE_URL}${details.poster_path}`} alt="" />
+              </div>
+              <div className="movie-body">
+                <div className="movie-overview">
+                  <div className="title">
+                    {details.title} <span>{details.release_date}</span>
+                  </div>
+                  <div className="movie-genres">
+                    <ul className="genres">{details && details.genres.map((genre) => <li key={genre.id}>{genre.name}</li>)}</ul>
+                  </div>
+                  <div className="rating">
+                    <Rating className="rating-stars" rating={details.vote_average} totalStars={10} />
+                    &nbsp;
+                    <span>{details.vote_average}</span> <p>({details.vote_count}) votes</p>
+                  </div>
+                  <Tabs>
+                    <div label="Overview">
+                      <Overview />
+                    </div>
+                    <div label="Crew">
+                      <Crew />
+                    </div>
+                    <div label="Media">
+                      <Media />
+                    </div>
+                    <div label="Reviews">
+                      <Reviews />
+                    </div>
+                  </Tabs>
                 </div>
-                <div className="movie-genres">
-                  <ul className="genres">{details && details.genres.map((genre) => <li key={genre.id}>{genre.name}</li>)}</ul>
-                </div>
-                <div className="rating">
-                  <Rating className="rating-stars" rating={details.vote_average} totalStars={10} />
-                  &nbsp;
-                  <span>{details.vote_average}</span> <p>({details.vote_count}) votes</p>
-                </div>
-                <Tabs>
-                  <div label="Overview">
-                    <Overview />
-                  </div>
-                  <div label="Crew">
-                    <Crew />
-                  </div>
-                  <div label="Media">
-                    <Media />
-                  </div>
-                  <div label="Reviews">
-                    <Reviews />
-                  </div>
-                </Tabs>
               </div>
             </div>
           </div>
-        </div>
+        )
       )}
     </>
   );
