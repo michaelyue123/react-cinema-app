@@ -33,6 +33,10 @@
     margin-top: -5px;
 }
 
+.header-image:hover {
+    cursor: pointer;
+}
+
 .header-nav {
     grid-area: menu;
     margin-right: 25px;
@@ -50,6 +54,10 @@
     .active-item {
         color: #3498db;
     }
+}
+
+.header-list-name:hover {
+    cursor: pointer;
 }
 
 .header-nav-item .header-list-name {
@@ -113,6 +121,16 @@
     outline: none;
     color: #9dbfaf;
     line-height: 36px;
+}
+
+#search {
+    margin-top: 10px;
+    margin-right: 15px;
+    margin-bottom: 12px;
+    height: 36px;
+    border: 1px solid #9aa9bb;
+    border-radius: 5px;
+    outline: none;
 }
 
 .disabled {

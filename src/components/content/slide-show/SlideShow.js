@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import './SlideShow.scss';
+import { v4 as uuidv4 } from 'uuid';
 import PropTypes from 'prop-types';
 
-const SlideShow = (props) => {
-  const { images, isHover } = props;
-
+const SlideShow = ({ images }) => {
   const [state, setState] = useState({
     slideShow: images[0],
     slideIndex: 0
@@ -16,9 +15,14 @@ const SlideShow = (props) => {
   let currentSlideIndex = 0;
 
   useEffect(() => {
+    setState({
+      ...state,
+      slideIndex: 0,
+      slideShow: images[0]
+    });
     const timeInterval = setInterval(() => {
       autoMoveSlide();
-    }, 3000);
+    }, 5000);
 
     setSliderInterval(timeInterval);
 
@@ -28,7 +32,7 @@ const SlideShow = (props) => {
     };
 
     // eslint-disable-next-line
-  }, []);
+  }, [images]);
 
   const autoMoveSlide = () => {
     let lastIndex = 0;
@@ -77,9 +81,9 @@ const SlideShow = (props) => {
 
   const Indicators = (props) => {
     const { currentSlide } = props;
-    const listIndicators = images.map((index) => {
+    const listIndicators = images.map((image, index) => {
       const buttonClasses = index === currentSlide ? 'slider-navButton slider-navButton--active' : 'slider-navButton';
-      return <button className={buttonClasses} key={index} />;
+      return <button className={buttonClasses} key={uuidv4()} />;
     });
 
     return <div className="slider-nav">{listIndicators}</div>;
@@ -90,7 +94,7 @@ const SlideShow = (props) => {
       <div className="slider">
         <div className="slider-slides">{images && images.length && slideShow && <div className="slider-image" style={{ backgroundImage: `url(${slideShow.url})` }}></div>}</div>
         <Indicators currentSlide={slideIndex} />
-        {isHover ? <RenderArrows /> : null}
+        <RenderArrows />
       </div>
     </>
   );
