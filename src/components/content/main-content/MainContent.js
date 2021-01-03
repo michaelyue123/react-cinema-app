@@ -32,13 +32,16 @@ function dispatchAction(type, payload) {
   }
 }
 
-const MainContent = ({ onClick }) => {
+const MainContent = () => {
   const { list, page, totalPages, movieType } = useSelector((state) => state.movies);
   const [currentPage, setCurrentPage] = useState(page);
   const [images, setImages] = useState([]);
   const dispatch = useDispatch();
+  let randomMovies;
 
-  const randomMovies = list.sort(() => Math.random() - Math.random()).slice(0, 4);
+  if(list) {
+    randomMovies = list.sort(() => Math.random() - Math.random()).slice(0, 4);
+  }
 
   const HEADER_TYPE = {
     now_playing: 'Now Playing',
@@ -90,10 +93,15 @@ const MainContent = ({ onClick }) => {
       dispatch(dispatchAction(RESPONSE_PAGE, newPayload));
 
       const payload = await getMovieData(movieType, pageNumber);
+      console.log(payload);
       dispatch(dispatchAction(MOVIE_LIST, payload.results));
     } catch (error) {
       if (error.response) {
-        dispatch(dispatchAction(SET_ERROR, error.response.data.message));
+        const payload = {
+          message: error.response.data.message || error.response.data.status_message,
+          statusCode: error.response.status
+        }
+        dispatch(dispatchAction(SET_ERROR, payload));
       }
     }
   };
@@ -107,7 +115,7 @@ const MainContent = ({ onClick }) => {
           <Paginate currentPage={currentPage} totalPages={totalPages} paginate={paginate} />
         </div>
       </div>
-      <Grid onClick={onClick} />
+      <Grid />
     </div>
   );
 };

@@ -7,15 +7,16 @@ import Media from './media/Media';
 import Reviews from './reviews/Reviews';
 import Tabs from './tabs/Tabs';
 import { movieDetails } from '../../../redux/actions/movies.action';
+import { pathURL } from '../../../redux/actions/routes.action';
 import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
-import { MOVIE_DETAILS, SET_ERROR } from '../../../redux/types';
+import { MOVIE_DETAILS, SET_ERROR, PATH_URL } from '../../../redux/types';
 import { IMAGE_URL } from '../../../services/movies.service';
 import Spinner from '../../spinner/Spinner';
 
 // dispatch movie action
-function dispatchMovieAction(type, payload) {
+function dispatchAction(type, payload) {
   switch (type) {
     case MOVIE_DETAILS:
       return {
@@ -27,17 +28,23 @@ function dispatchMovieAction(type, payload) {
         type: SET_ERROR,
         payload
       };
+    case PATH_URL:
+      return {
+        type: PATH_URL,
+        payload
+      };
     default:
       return payload;
   }
 }
 
-const Details = () => {
+const Details = (props) => {
   const movie = useSelector((state) => state.movies.movie);
   const { id } = useParams();
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [details, setDetails] = useState();
+  const { match } = props;
 
   useEffect(() => {
     setLoading(true);
@@ -49,14 +56,21 @@ const Details = () => {
   useEffect(() => {
     const fetchMovieDetails = async () => {
       try {
+        const payload = pathURL(match.path, match.url);
+        dispatch(dispatchAction(PATH_URL, payload));
+
         if (movie.length === 0) {
           const res = await movieDetails(id);
-          dispatch(dispatchMovieAction(MOVIE_DETAILS, res));
+          dispatch(dispatchAction(MOVIE_DETAILS, res));
         }
         setDetails(movie[0]);
       } catch (error) {
         if (error.response) {
-          dispatch(dispatchMovieAction(SET_ERROR, error.response.data.message));
+          const payload = {
+            message: error.response.data.message || error.response.data.status_message,
+            statusCode: error.response.status
+          }
+          dispatch(dispatchAction(SET_ERROR, payload));
         }
       }
     };
@@ -117,7 +131,9 @@ const Details = () => {
 
 Details.propTypes = {
   movies: PropTypes.array,
-  movieDetails: PropTypes.func
+  movieDetails: PropTypes.func,
+  pathURL: PropTypes.func,
+  match: PropTypes.object
 };
 
 export default Details;

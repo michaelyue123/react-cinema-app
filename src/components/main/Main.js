@@ -2,11 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import MainContent from '../content/main-content/MainContent';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
-import { LOAD_MORE_RESULTS, RESPONSE_PAGE, SET_ERROR } from '../../redux/types';
+import { LOAD_MORE_RESULTS, RESPONSE_PAGE, SET_ERROR, PATH_URL } from '../../redux/types';
 import { loadMoreMovies, setResponsePageNumber } from '../../redux/actions/movies.action';
+import { pathURL } from '../../redux/actions/routes.action';
 import Spinner from '../spinner/Spinner';
 import SearchResult from '../content/search-result/SearchResult';
-import { useHistory } from 'react-router-dom';
 
 // dispatch movie action
 function dispatchAction(type, payload) {
@@ -26,12 +26,17 @@ function dispatchAction(type, payload) {
         type: SET_ERROR,
         payload
       };
+    case PATH_URL:
+      return {
+        type: PATH_URL,
+        payload
+      };
     default:
       return payload;
   }
 }
 
-const Main = ({ onClick }) => {
+const Main = (props) => {
   const mainStyles = {
     textAlign: 'center',
     height: '100vh',
@@ -41,12 +46,14 @@ const Main = ({ onClick }) => {
 
   const [loading, setLoading] = useState(false);
   const { page, totalPages, movieType, searchResult } = useSelector((state) => state.movies);
+  const errors = useSelector(state => state.errors);
+
   const [currentPage, setCurrentPage] = useState(page);
   const mainRef = useRef();
   const bottomLineRef = useRef();
   const dispatch = useDispatch();
-  const history = useHistory();
-
+  const { match } = props;
+  
   useEffect(() => {
     setLoading(true);
     setTimeout(() => {
@@ -57,11 +64,17 @@ const Main = ({ onClick }) => {
   useEffect(() => {
     async function fetchMovieData() {
       try {
+        const payload = pathURL(match.path, match.url);
+        dispatch(dispatchAction(PATH_URL, payload));
         const newPayload = setResponsePageNumber(currentPage, totalPages);
         dispatch(dispatchAction(RESPONSE_PAGE, newPayload));
       } catch (error) {
         if (error.response) {
-          dispatch(dispatchAction(SET_ERROR, error.response.data.message));
+          const payload = {
+            message: error.response.data.message || error.response.data.status_message,
+            statusCode: error.response.status
+          }
+          dispatch(dispatchAction(SET_ERROR, payload));
         }
       }
     }
@@ -91,16 +104,16 @@ const Main = ({ onClick }) => {
     }
   };
 
-  const onClickChange = () => {
-    console.log('1234');
-    history.push('/searchResults');
-  };
-
   return (
-    <div className="main" style={mainStyles} ref={mainRef} onScroll={() => handleScroll()}>
-      {loading ? <Spinner /> : <>{searchResult && searchResult.length === 0 ? <MainContent onClick={onClick} /> : <SearchResult onClick={onClickChange} />}</>}
-      <div ref={bottomLineRef}></div>
-    </div>
+    <>
+      {
+        !errors.message && !errors.statusCode && (
+        <div className="main" style={mainStyles} ref={mainRef} onScroll={handleScroll}>
+          {loading ? <Spinner /> : <>{searchResult && searchResult.length === 0 ? <MainContent /> : <SearchResult />}</>}
+          <div ref={bottomLineRef}></div>
+        </div>
+      )}
+    </>
   );
 };
 
@@ -111,7 +124,10 @@ Main.propTypes = {
   loadMoreMovies: PropTypes.func,
   setResponsePageNumber: PropTypes.func,
   movieType: PropTypes.string,
-  searchResult: PropTypes.array
+  searchResult: PropTypes.array,
+  pathURL: PropTypes.func,
+  match: PropTypes.object,
+  errors: PropTypes.object
 };
 
 export default Main;
