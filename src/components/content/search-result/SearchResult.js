@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import LazyImage from '../../lazy-image/LazyImage';
 import { Link } from 'react-router-dom';
 
-const SearchResult = () => {
+const SearchResult = ({ onClick }) => {
   const [movieData, setMovieData] = useState([]);
   const { searchQuery, searchResult } = useSelector((state) => state.movies);
 
@@ -19,7 +19,7 @@ const SearchResult = () => {
 
   const formatMovieTitle = (title) => {
     const titleStr = title.toLowerCase();
-    return titleStr.replace(/ /g, '-');
+    return titleStr.replace(/ /g, '-');    
   };
 
   return (
@@ -35,7 +35,7 @@ const SearchResult = () => {
                 <LazyImage className="grid-cell" alt="placeholder" src={`${IMAGE_URL}${image.poster_path}`}>
                   <div className="grid-read-more">
                     <button className="grid-cell-button">
-                      <Link to={`/${image.id}/${formatMovieTitle(image.title)}/details`}>Read More</Link>
+                      <Link to={`/${image.id}/${formatMovieTitle(image.title)}/details`} onClick={onClick}>Read More</Link>
                     </button>
                   </div>
                   <div className="grid-detail">
