@@ -8,9 +8,7 @@ import './Header.scss';
 import { MOVIE_LIST, MOVIE_TYPE, RESPONSE_PAGE, SET_ERROR, SEARCH_QUERY, SEARCH_RESULT, CLEAR_MOVIE_DETAILS, PATH_URL } from '../../redux/types';
 import { getMovieData, setMovieType, setResponsePageNumber, searchMovieQuery, searchMovieResult, clearMovieDetails } from '../../redux/actions/movies.action';
 import { pathURL } from '../../redux/actions/routes.action';
-import { setError  } from '../../redux/actions/error.action';
-
-
+import { setError } from '../../redux/actions/error.action';
 
 const HEADER_LIST = [
   {
@@ -81,7 +79,7 @@ function dispatchMovieAction(type, payload) {
       return {
         type: PATH_URL,
         payload
-      }; 
+      };
     default:
       return payload;
   }
@@ -95,8 +93,8 @@ const Header = () => {
   const [search, setSearch] = useState('');
   const [disableSearch, setDisableSearch] = useState(false);
   const [hideHeader, setHideHeader] = useState(false);
-  const { path, url, routesArray } = useSelector(state => state.routes);
-  const errors = useSelector(state => state.errors);
+  const { path, url, routesArray } = useSelector((state) => state.routes);
+  const errors = useSelector((state) => state.errors);
 
   const dispatch = useDispatch();
   const history = useHistory();
@@ -105,8 +103,8 @@ const Header = () => {
 
   useEffect(() => {
     console.log(process.env);
-    if(routesArray.length) {
-      if(!path && !url) {
+    if (routesArray.length) {
+      if (!path && !url) {
         const payload = pathURL('/', '/');
         dispatch(dispatchMovieAction(PATH_URL, payload));
         const errorMsg = setError({ message: `Page with pathname ${location.pathname} not found with status code 404.`, statusCode: 404 });
@@ -116,25 +114,25 @@ const Header = () => {
       }
     }
     // eslint-disable-next-line
-  }, [path, url, routesArray, pathURL]); 
+  }, [path, url, routesArray, pathURL]);
 
   useEffect(() => {
     async function fetchMovieData() {
       try {
-        if(path && !errors.message && !errors.statusCode) {
+        if (path && !errors.message && !errors.statusCode) {
           const response = await getMovieData(type, page);
           const { results, payload } = response;
-  
+
           dispatch(dispatchMovieAction(MOVIE_LIST, results));
-  
+
           const response_1 = setResponsePageNumber(payload.page, payload.totalPages);
           dispatch(dispatchMovieAction(RESPONSE_PAGE, response_1));
-  
-          if(detailsRoute || location.pathname === '/') {
+
+          if (detailsRoute || location.pathname === '/') {
             setHideHeader(true);
           }
 
-          if(location.pathname !== '/' && location.key) {
+          if (location.pathname !== '/' && location.key) {
             setDisableSearch(true);
           }
         }
@@ -143,7 +141,7 @@ const Header = () => {
           const payload = {
             message: error.response.data.message || error.response.data.status_message,
             statusCode: error.response.status
-          }
+          };
           dispatch(dispatchMovieAction(SET_ERROR, payload));
         }
       }
@@ -154,16 +152,15 @@ const Header = () => {
   }, [type, location, disableSearch, path]);
 
   useEffect(() => {
-    if(errors.message || errors.statusCode) {
+    if (errors.message || errors.statusCode) {
       const payload = pathURL('/', '/');
       dispatch(dispatchMovieAction(PATH_URL, payload));
       const error = new Error(`${errors.message} with status code ${errors.statusCode}`);
       throw error;
-    } 
-    
-    // eslint-disable-next-line
-  }, [errors])
+    }
 
+    // eslint-disable-next-line
+  }, [errors]);
 
   const setMovieTypeUrl = async (type) => {
     setDisableSearch(false);
@@ -171,10 +168,10 @@ const Header = () => {
       const result = clearMovieDetails([]);
       dispatch(dispatchMovieAction(CLEAR_MOVIE_DETAILS, result));
       history.push('/');
-    } 
+    }
 
     setType(type);
-    dispatch(dispatchMovieAction(SEARCH_RESULT, [])); 
+    dispatch(dispatchMovieAction(SEARCH_RESULT, []));
     const clickedType = setMovieType(type);
     dispatch(dispatchMovieAction(MOVIE_TYPE, clickedType));
   };
@@ -196,7 +193,7 @@ const Header = () => {
         const payload = {
           message: error.response.data.message || error.response.data.status_message,
           statusCode: error.response.status
-        }
+        };
         dispatch(dispatchMovieAction(SET_ERROR, payload));
       }
     }
@@ -217,7 +214,7 @@ const Header = () => {
         const payload = {
           message: error.response.data.message || error.response.data.status_message,
           statusCode: error.response.status
-        }
+        };
         dispatch(dispatchMovieAction(SET_ERROR, payload));
       }
     }
@@ -258,7 +255,7 @@ const Header = () => {
                     <span className="header-list-name">{data.name}</span>
                   </li>
                 ))}
-              
+
               <input className={`search-input ${disableSearch ? 'disabled' : ''}`} type="text" placeholder="Search for a movie" value={search} onChange={onSearchChange} />
               <button type="button" id="search" className={`btn btn-primary btn-sm ${disableSearch ? 'disabled' : ''}`} onClick={onClickSearch}>
                 <i className="fa fa-search"></i>

@@ -11,7 +11,6 @@ import ErrorBoundary from './components/error/ErrorBoundary';
 import { appRoutes } from './redux/actions/routes.action';
 import { APP_ROUTES, SET_ERROR } from './redux/types';
 
-
 // dispatch route action
 function dispatchRouteAction(type, payload) {
   switch (type) {
@@ -42,41 +41,38 @@ const App = (props) => {
       path: '/:id/:name/details',
       component: Details
     }
-  ]
+  ];
 
   const dispatch = useDispatch();
 
   useEffect(() => {
     const routesAction = async () => {
-        const payload = await appRoutes(routesArray);
-        dispatch(dispatchRouteAction(APP_ROUTES, payload));
-    }
+      const payload = await appRoutes(routesArray);
+      dispatch(dispatchRouteAction(APP_ROUTES, payload));
+    };
 
     routesAction();
     // eslint-disable-next-line
   }, [routesArray, appRoutes]);
 
   return (
-      <Router>
-        <ErrorBoundary>
-          <Header />
-        </ErrorBoundary>
-        <div className="app">
-          <Switch>
-            {
-              routesArray.map((data) => 
-                <Route key={data.id} exact path={data.path} component={data.component} {...props} />
-              )
-            }
-          </Switch>
-        </div>
-      </Router>
+    <Router>
+      <ErrorBoundary>
+        <Header />
+      </ErrorBoundary>
+      <div className="app">
+        <Switch>
+          {routesArray.map((data) => (
+            <Route key={data.id} exact path={data.path} component={data.component} {...props} />
+          ))}
+        </Switch>
+      </div>
+    </Router>
   );
 };
 
-
 App.propTypes = {
   routesArray: Proptypes.array
-}
+};
 
 export default App;

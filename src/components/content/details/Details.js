@@ -69,7 +69,7 @@ const Details = (props) => {
           const payload = {
             message: error.response.data.message || error.response.data.status_message,
             statusCode: error.response.status
-          }
+          };
           dispatch(dispatchAction(SET_ERROR, payload));
         }
       }

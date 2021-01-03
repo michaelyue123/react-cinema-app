@@ -46,14 +46,14 @@ const Main = (props) => {
 
   const [loading, setLoading] = useState(false);
   const { page, totalPages, movieType, searchResult } = useSelector((state) => state.movies);
-  const errors = useSelector(state => state.errors);
+  const errors = useSelector((state) => state.errors);
 
   const [currentPage, setCurrentPage] = useState(page);
   const mainRef = useRef();
   const bottomLineRef = useRef();
   const dispatch = useDispatch();
   const { match } = props;
-  
+
   useEffect(() => {
     setLoading(true);
     setTimeout(() => {
@@ -73,7 +73,7 @@ const Main = (props) => {
           const payload = {
             message: error.response.data.message || error.response.data.status_message,
             statusCode: error.response.status
-          }
+          };
           dispatch(dispatchAction(SET_ERROR, payload));
         }
       }
@@ -106,8 +106,7 @@ const Main = (props) => {
 
   return (
     <>
-      {
-        !errors.message && !errors.statusCode && (
+      {!errors.message && !errors.statusCode && (
         <div className="main" style={mainStyles} ref={mainRef} onScroll={handleScroll}>
           {loading ? <Spinner /> : <>{searchResult && searchResult.length === 0 ? <MainContent /> : <SearchResult />}</>}
           <div ref={bottomLineRef}></div>
