@@ -39,7 +39,7 @@ const MainContent = () => {
   const dispatch = useDispatch();
   let randomMovies;
 
-  if(list) {
+  if (list) {
     randomMovies = list.sort(() => Math.random() - Math.random()).slice(0, 4);
   }
 
@@ -100,7 +100,7 @@ const MainContent = () => {
         const payload = {
           message: error.response.data.message || error.response.data.status_message,
           statusCode: error.response.status
-        }
+        };
         dispatch(dispatchAction(SET_ERROR, payload));
       }
     }

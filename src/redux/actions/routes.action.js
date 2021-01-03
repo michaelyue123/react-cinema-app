@@ -1,9 +1,8 @@
-
 export const appRoutes = (routes) => {
-    return routes;
-}
+  return routes;
+};
 
 export const pathURL = (path, url) => {
-    const payload = { path, url };
-    return payload;
-}
+  const payload = { path, url };
+  return payload;
+};

@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import { setError } from '../../redux/actions/error.action';
 
-
 import './ErrorPage.scss';
 import { SET_ERROR } from '../../redux/types';
 
@@ -12,13 +11,12 @@ const ErrorPage = ({ clearState }) => {
   const history = useHistory();
   const dispatch = useDispatch();
 
-
   const navigateToHomePage = () => {
-    const payload = setError({ message: '', statusCode: null })
-    dispatch({type: SET_ERROR, payload});
+    const payload = setError({ message: '', statusCode: null });
+    dispatch({ type: SET_ERROR, payload });
     clearState();
     history.push('/');
-  }
+  };
 
   return (
     <div className="error-page">
@@ -33,6 +31,6 @@ const ErrorPage = ({ clearState }) => {
 
 ErrorPage.propTypes = {
   clearState: PropTypes.func
-}
+};
 
 export default ErrorPage;

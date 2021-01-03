@@ -19,7 +19,7 @@ const SearchResult = ({ onClick }) => {
 
   const formatMovieTitle = (title) => {
     const titleStr = title.toLowerCase();
-    return titleStr.replace(/ /g, '-');    
+    return titleStr.replace(/ /g, '-');
   };
 
   return (
@@ -35,7 +35,9 @@ const SearchResult = ({ onClick }) => {
                 <LazyImage className="grid-cell" alt="placeholder" src={`${IMAGE_URL}${image.poster_path}`}>
                   <div className="grid-read-more">
                     <button className="grid-cell-button">
-                      <Link to={`/${image.id}/${formatMovieTitle(image.title)}/details`} onClick={onClick}>Read More</Link>
+                      <Link to={`/${image.id}/${formatMovieTitle(image.title)}/details`} onClick={onClick}>
+                        Read More
+                      </Link>
                     </button>
                   </div>
                   <div className="grid-detail">
